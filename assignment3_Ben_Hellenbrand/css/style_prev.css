@@ -1,0 +1,104 @@
+#log-css #prev-css .miniTitle {
+	margin: 10px;
+	margin-top: 15px;
+	font-size: 24px;
+	text-decoration: underline;
+}
+#log-css #prev-css #song_container{	
+	max-height: 400px;
+}
+
+.recentNav{
+	margin: 0 auto;
+	max-width: 900px;
+	}
+.recentNav ul{
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row nowrap;
+}
+.recentNav ul li{
+	margin: 0px 15px 2px;
+	max-width: 150px;
+	display: block;
+	flex: 1;
+}
+
+.recentNav ul li #left{border-radius: 20px 10px 10px 20px;}
+.recentNav ul li #center{border-radius: 5px ;}
+.recentNav ul li #right{border-radius: 10px 20px 20px 10px;}
+
+.recentNav ul li a{
+	margin: 0 auto;
+	padding: 2px;
+	font-size: 18px;
+	color: #fff;
+	display: block;
+	background-color: #646;
+	text-decoration: none;
+	list-style: none;
+}
+
+#song_container
+{
+	margin: 0 auto;
+	max-width: 900px;
+	max-height: 650px;
+	overflow: auto;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #555;
+}
+
+#song_container .song
+{
+	border-style: double none double;
+	border-width: 1px;
+	border-color: #000;
+
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+}
+
+#song_container h2{ font-size: 22px;}
+#song_container h3{ font-size: 18px;}
+#song_container h4{ font-size: 16px;}
+
+#song_container .song .day{ color: #535;}
+#song_container .song .time{ color: #757;}
+#song_container .song .title{ color: #000;}
+#song_container .song .artist{ color: #555;}
+#song_container .song .album{ color: #646;}
+#song_container .song .label{ color: #868;}
+
+#song_container .song:nth-of-type(even){
+	background-color: #eee;
+}
+	
+#song_container .song:nth-of-type(odd){
+	background-color: #ddd;
+}
+
+#song_container .song .song_section
+{
+	height: 60px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #555;
+	
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+	justify-content: center;
+}
+
+#song_container .song .timeData{flex: 20%;}
+#song_container .song .songData{flex: 50%;}
+#song_container .song .albumData{flex: 30%;}
+
+
+
+
+
+
