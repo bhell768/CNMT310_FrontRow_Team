@@ -93,14 +93,95 @@ if (isset($_POST["stack"]))
 	}
 	if ($stackBool && $songTitleBool && $songArtistBool && $albumBool && $labelBool)
 	{
-		//$minusHour = time()-3600;
-		//$fh = fopen("/home/bbart595/webfiles/song_history.txt", 'w');
-		//fwrite($fh, $_POST[$stack] . "|" . $_POST[$title] . "|" . $_POST[$artist] . "|" . $_POST[$album] . "|" . $_POST[$label] . "|" . $minusHour . "|" . $_SESSION[$announcer]);
-	    $fileContent = file_get_contents ("/home/bbart595/webfiles/song_history.txt");
-	    file_put_contents ("/home/bbart595/webfiles/song_history.txt", $_POST[$stack] . "|" . $_POST[$title] . "|" . $_POST[$artist] . "|" . $_POST[$album] . "|" . $_POST[$label] . "|" . time() . "|" . $_SESSION[$announcer] . "\n" . $fileContent);
+		$link = mysqli_connect("cnmtsrv1.uwsp.edu","barthel_b_user","hit79jin","barthel_b");
 		
-		//$formPage->file_prepend("/home/bbart595/webfiles/song_history.txt", $_POST[$stack] . "|" . $_POST[$title] . "|" . $_POST[$artist] . "|" . $_POST[$album] . "|" . $_POST[$label] . "|" . $_POST[$time]);
+		if (!$link){
+			echo "Error: Unable to connect to MySQL." . PHP_EOL;
+			echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
+			echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
+			exit;
+		}
+		//sanatise that input
+		$safeArtist = mysqli_real_escape_string($artistVal,$link);	
+		$safeLabel = mysqli_real_escape_string($LabelVal,$link);
+		$safeStack = mysqli_real_escape_string($stackVal,$link);
+		$safeAlbum = mysqli_real_escape_string($albumVal,$link);
+		$safeTitle = mysqli_real_escape_string($titleVal,$link);
+		
+		$searchArtist = "select id from artist where artistname = '{$safeArtist}';";
+		if($queryArtist = mysqli_query($link,$searchArtist)){
+			$row = mysqli_fetch_assoc($queryArtist));
+			if(!empty($row))
+			{
+				$artistId = $row['id'];
+			}
+			else
 
+				$insertArtist = "insert into artist(artistname) values('{$safeArtist}');";
+				$queryArtist = mysqli_query($link,$insertArtist);
+				$artistId = mysqli_insert_id($link);
+			}
+		}		
+
+		$searchLabel = "select id from label where labelname = '{$safeLabel}';";
+		if($queryLabel = mysqli_query($link,$searchLabel)){
+			$row = mysqli_fetch_assoc($queryLabel));
+			if(!empty($row))
+			{
+				$labelId = $row['id'];
+			}
+			else
+			{
+				$insertLabel = "insert into label(labelname) values('{$safeLabel}');";
+				$queryLabel = mysqli_query($link,$insertLabel);
+				$labelId = mysqli_insert_id($link);
+			}
+		}		
+	
+		$searchStack = "select id from stack where stackname = '{$safeStack}';";
+		if($queryStack = mysqli_query($link,$searchStack)){
+			$row = mysqli_fetch_assoc($queryStack));
+			if(!empty($row))
+			{
+				$stackId = $row['id'];
+			}
+			else
+			{
+				$stackId = 1;
+			}
+		}		
+
+		$searchAlbum = "select id from album where albumname = '{$safeAlbum}';";
+		if($queryAlbum = mysqli_query($link,$searchAlbum)){
+			$row = mysqli_fetch_assoc($queryAlbum));
+			if(!empty($row))
+			{
+				$albumId = $row['id'];
+			}
+			else
+			{
+				$insertAlbum = "insert into album(albumname) values('{$safeAlbum}');";
+				$queryAlbum = mysqli_query($link,$insertAlbum);
+				$albumId = mysqli_insert_id($link);
+			}
+		}
+		
+		$searchSong = "select song.id from song,stack,album,label,artist " . 
+			"where song.stackid = stack.id and song.albumid = album.id and album.labelid = label.id and album.artistid = artist.id " .
+			"and title = '{$safeSong}' and stackid = '{$stackId}' and albumname = '{$albumId}' and artistname = '{$artistId}' and labelname = '{$labelId}';";
+		if($querySong = mysqli_query($link,$searchSong)){
+			$row = mysqli_fetch_assoc($queryLabel));
+			if(!empty($row))
+			{
+				$songId = $row['id'];
+			}
+			else
+			{
+				$insertSong = "insert into song(title,stackid,albumid) values('{$safeSong}',{$stackId},{$albumId});";
+				$querySong = mysqli_query($link,$insertSong);
+				$songId = mysqli_insert_id($link);
+			}
+		}		
 		$stackOp = 0;
 		$titleVal = "";
 		$artistVal = "";
