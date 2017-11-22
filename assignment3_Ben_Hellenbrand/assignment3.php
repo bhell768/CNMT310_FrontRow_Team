@@ -110,7 +110,7 @@ if (isset($_POST["stack"]))
 		
 		$searchArtist = "select id from artist where artistname = '{$safeArtist}';";
 		if($queryArtist = mysqli_query($link,$searchArtist)){
-			$row = mysqli_fetch_assoc($queryArtist));
+			$row = mysqli_fetch_assoc($queryArtist);
 			if(!empty($row))
 			{
 				$artistId = $row['id'];
@@ -125,7 +125,7 @@ if (isset($_POST["stack"]))
 
 		$searchLabel = "select id from label where labelname = '{$safeLabel}';";
 		if($queryLabel = mysqli_query($link,$searchLabel)){
-			$row = mysqli_fetch_assoc($queryLabel));
+			$row = mysqli_fetch_assoc($queryLabel);
 			if(!empty($row))
 			{
 				$labelId = $row['id'];
@@ -140,7 +140,7 @@ if (isset($_POST["stack"]))
 	
 		$searchStack = "select id from stack where stackname = '{$safeStack}';";
 		if($queryStack = mysqli_query($link,$searchStack)){
-			$row = mysqli_fetch_assoc($queryStack));
+			$row = mysqli_fetch_assoc($queryStack);
 			if(!empty($row))
 			{
 				$stackId = $row['id'];
@@ -153,7 +153,7 @@ if (isset($_POST["stack"]))
 
 		$searchAlbum = "select id from album where albumname = '{$safeAlbum}';";
 		if($queryAlbum = mysqli_query($link,$searchAlbum)){
-			$row = mysqli_fetch_assoc($queryAlbum));
+			$row = mysqli_fetch_assoc($queryAlbum);
 			if(!empty($row))
 			{
 				$albumId = $row['id'];
@@ -170,7 +170,7 @@ if (isset($_POST["stack"]))
 			"where song.stackid = stack.id and song.albumid = album.id and album.labelid = label.id and album.artistid = artist.id " .
 			"and title = '{$safeSong}' and stackid = '{$stackId}' and albumname = '{$albumId}' and artistname = '{$artistId}' and labelname = '{$labelId}';";
 		if($querySong = mysqli_query($link,$searchSong)){
-			$row = mysqli_fetch_assoc($queryLabel));
+			$row = mysqli_fetch_assoc($queryLabel);
 			if(!empty($row))
 			{
 				$songId = $row['id'];

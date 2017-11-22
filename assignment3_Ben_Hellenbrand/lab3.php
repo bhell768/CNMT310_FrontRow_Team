@@ -23,54 +23,46 @@ if (isset($_POST["username"]))
 {
 	if (!empty($_POST["username"]) && !empty($_POST["password"]))
 	{
-		$fh = fopen("/home/bhell768/webfiles/creds.txt","r");
-
-		if (is_resource($fh))
-		{
-			while ($line = fgets($fh))
-			{
-				$tempArray = explode("|",$line);
-				array_push($credentials,$tempArray[0],$tempArray[1]);
-			}
-		
-			while($i < count($credentials))
-			{
-				if($_POST['username'] == rtrim($credentials[$i]))
-				{
-					$i = $i + 1;
-					if($_POST['password'] == rtrim($credentials[$i]))
-					{
-						$_SESSION['loggedIn']="true";
-						$_SESSION['username']=$_POST['username'];
-						break;
-					}
-					else
-					{
-						$i = $i + 1;
-					}
-				}
-				else
-				{	
-					$i = $i + 2;
-				}
-			}
-			if($_SESSION['loggedIn']=="true")
-			{	
-				header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php");
-				exit();
-			}
-			else
-			{
-// incorrect login
-				$loginCase = "incorrect";
-			}
-			fclose($fh);
+		$link = mysqli_connect("cnmtsrv1.uwsp.edu","barthel_b_user","hit79jin","barthel_b");
+		if(!$link){
+			$debugging = "Error: Unable to connect to MySQL. " . PHP_EOL;
+			$debugging .= "Debuggin errno: " mysqli_connect_errno() . PHP_EOL;
+			$debugging .= "Debuggin error: " mysqli_connect_error() . PHP_EOL;
 		}
-		else
-		{
-// unable to access database
-			$loginCase = "error";
-		}	
+		$userEntered = $_POST['username'];
+		$safeUser = mysqli_real_escape_string($userEntered,$link);
+		
+		$psswEntered = $_POST['password'];
+		$safePssw = mysqli_real_escape_string($psswEntered,$link);
+
+		$searchUser = "select id from user where username = '{$safePssw}';";
+		if($queryUser = mysqli_query($link,$searchUser)){
+			$row = mysqli_fetch_assoc($queryUser));
+			if(!empty($row)){
+				$userId = $row['id'];
+				$searchUser = "select password from user where id = '{$userId}';";
+				if($queryUser = mysqli_query($link,$searchUser)){
+					$row = mysqli_fetch_assoc($queryUser);
+					if(!empty($row){
+						$storedPssw = $row['password'];
+						if(password_verify($safePssw,$storedPssw)){//not sure if sanitized password will mess with hashing
+							$_SESSION['loggedIn']="true";
+							$_SESSION['username']=$safeUser;//not sure if should sanitize and store or not allow certain characters and then that would be sanitized
+						}
+						else{
+							$loginCase = "incorrect";//password didn't checkout
+						}
+					}
+					else {
+						$debuggin .= "User: " . $userId . " has no password.";//if here userid exists for username but no password is in entry
+						$loginCase = "incorrect";
+					}
+				}
+			}else{
+				$loginCase = "incorrect";//no userid no user
+			}
+		}
+
 	}
 	else
 	{
@@ -106,7 +98,7 @@ print $loginPage -> addLabel("password","Password:");
 print $loginPage -> addPassword("password","password") . "<br />"; 
 switch($loginCase)
 {
-	case "incorrect":
+	case "incorrect"://should probably bring along username for ease of use
 		print "Username or Password Incorrect<br />";
 		break;
 	case "nothing":
@@ -115,7 +107,7 @@ switch($loginCase)
 	case "userNothing":
 		print "No Username Entered<br />";
 		break;
-	case "pswNothing":
+	case "pswNothing"://should probably bring along username for ease of use
 		print "No Password Entered<br />";
 		break;
 	case "error":
