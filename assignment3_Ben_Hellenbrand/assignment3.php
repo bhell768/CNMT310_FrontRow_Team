@@ -6,7 +6,7 @@
 	
 	if(!$_SESSION['loggedIn']=="true")
 	{
-		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/lab3.php");
+		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/lab3.php");
 		exit();
 	}
 	
@@ -140,8 +140,8 @@ if (isset($_POST["stack"]))
 				<nav>
 					<!--TODO implement the navigation bar -->
 					<ul>
-						<li><a href=''>Test Nav</a></li>
-						<li><a href=''>Test Nav</a></li>
+						<li><a href='assignment3.php'>Song History and Addition</a></li>
+						<li><a href='main_report_page.php'>Reporting Page</a></li>
 						<li><a href=''>Test Nav</a></li>
 						<li><a href=''>Test Nav</a></li>					
 					</ul>
@@ -197,12 +197,12 @@ if (isset($_POST["stack"]))
 		$time = $_GET['current_search_time'] -3600;
 	}
 	print"<div class='recentNav'>";
-	print"<a href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?current_search_time=" . $time . "'><button>Previous Hour</button></a>";
+	print"<a href='http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/assignment3.php?current_search_time=" . $time . "'><button>Previous Hour</button></a>";
 	$time = $time + 7200;
 	if(!(time() <= ($time)))
 	{
-		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?current_search_time=" . time() . "'><button>Return to Current Hour</button></a>";
-		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?current_search_time=" . $time . "'><button>Next Hour</button></a>";
+		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/assignment3.php?current_search_time=" . time() . "'><button>Return to Current Hour</button></a>";
+		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/assignment3.php?current_search_time=" . $time . "'><button>Next Hour</button></a>";
 	}
 	print"</div>";
 	print"</div>";
