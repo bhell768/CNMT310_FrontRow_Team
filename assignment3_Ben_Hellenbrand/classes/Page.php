@@ -40,6 +40,11 @@ class Page
     function setBottom()
     {
 		$this -> _bottomContent .= "</div>";
+		$this -> _bottomContent .= "<footer>
+										<div class='footer-container'>
+											<p>CNMT 310 Semester Project</p>
+										</div>
+									</footer>";
 		$this -> _bottomContent .= "</body>";
 		$this -> _bottomContent .= "</html>"; 
     }
@@ -70,27 +75,30 @@ class Page
 			$foundFirstEntry = false;
 			while ($line = fgets($fh)) 
 			{
-				print"<div class='colors rec-0 rec-1 song'>";
 				$songDetails = explode("|",$line);
 				if($songDetails[5] >= $beginningHour && $songDetails[5] <= $endingHour)
 				{
+					print"<div class='colors rec-0 rec-1 song'>";
 					$foundFirstEntry=true;
-					print"<tr>";
-					unset($songDetails[5]);
-					unset($songDetails[6]);
-					print"<div class='song_section timeData'>";
-					foreach($songDetails as $currentEntry)
-					{
-						print"<td style='border: 1px solid black;'>" . $currentEntry . "</td>";
-					}
+						print"<div class='song_section timeData'>";
+							print"<h3 class='day'>Test Day</h3>";
+							print"<h3 class='time'>Test Time</h3>";
+						print"</div>";
+						print"<div class='song_section songData'>";
+							print"<h2 class='title'>" . $songDetails[1] . "</h2>";
+							print"<h3 class='artist'>" . $songDetails[2] . "</h3>";
+						print"</div>";
+						print"<div class='song_section albumData'>";
+							print"<h4 class='album'>" . $songDetails[3] . "</h4>";
+							print"<h4 class='label'>" . $songDetails[4] . "</h4>";
+						print"</div>";
 					print"</div>";
-					print"</tr>";
+
 				}
 				else if($foundFirstEntry==true)
 				{
 					break;
 				}
-				print"</div>";
 			}//end while
 		}
 	}

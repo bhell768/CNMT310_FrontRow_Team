@@ -123,28 +123,59 @@ if (isset($_POST["stack"]))
 	$formPage -> setBottom();
 
 	print $formPage -> getTop();
+	print "<header>
+				<div class='header-cover'>
+					<div class='head-title'>
+						<h1>WWWSP - 90FM</h1>
+						<h2>DJ Hub</h2>
+					</div>
+					<div class='head-logo'>
+						<img alt='90FM Logo' src='img/WWSP_90fm_mic.png'/>
+					</div>
+					<div class='head-login'>
+						<h3>Welcome</h3>
+						<span id='login_errors'></span>
+					</div>
+				</div>
+				<nav>
+					<!--TODO implement the navigation bar -->
+					<ul>
+						<li><a href=''>Test Nav</a></li>
+						<li><a href=''>Test Nav</a></li>
+						<li><a href=''>Test Nav</a></li>
+						<li><a href=''>Test Nav</a></li>					
+					</ul>
+				</nav>
+			</header>";
+	print "<section class='main-container'>
+				<div class='title-wrapper'>
+					<h2>Song History and Addition</h2>
+				</div>
+				<div class='main-content'>";
 	print $formPage -> getFormTop("POST","assignment3.php");
-	print "<h1>UWSP Playlist Tracker</h1>\n";
+	print "<h1>UWSP Playlist Tracker</h1>";
+	print "<div class='row'>";
+	print "<div class='row-item'>Song Title: " . $formPage -> addTextInput("songTitle",$titleVal) . "</div>";
+	print "<div class='row-item'>Song Artist: " . $formPage -> addTextInput("songArtist",$artistVal) . "</div>";
+	print "</div>";
+	print "<div class='row'>";
+	print "<div class='row-item'>Album: " . $formPage -> addTextInput("album",$albumVal) . "</div>";
+	print "<div class='row-item'>Label: " . $formPage -> addTextInput("label",$labelVal) . "</div>";
+	print "</div>";
+	print "<div class='row'>";
+	print "<div class='row-item'>";
 	print $formPage -> addLabel("selStack","Stack: ");
 	$selOption = array("","A","B","C","D","E","LR","MR","HR","NM","WI");
-	print $formPage -> addSelect("stack","selStack",$selOption,$stackOp) . "<br />";
-	print "Song Title: " . $formPage -> addTextInput("songTitle",$titleVal) . "<br />";
-	print "Song Artist: " . $formPage -> addTextInput("songArtist",$artistVal) . "<br />";
-	print "Album: " . $formPage -> addTextInput("album",$albumVal) . "<br />";
-	print "Label: " . $formPage -> addTextInput("label",$labelVal) . "<br />";
-	print $formPage->addHiddenTextInput("announcer",$_SESSION['username']) . "<br />";
+	print $formPage -> addSelect("stack","selStack",$selOption,$stackOp);
+	print "</div></div>";
+	print $formPage->addHiddenTextInput("announcer",$_SESSION['username']);
+	print "<div class='row'>";
 	print $formPage -> addSubmit("submit");
+	print "</div>";
 	print $formPage -> getFormBottom();
 	
+	print "</div>";
 	print"<div id='song_container'>";
-	print"<table style='border-collapse: collapse; border: 1px solid black;'>";
-	print"<tr>";
-	print"<th style='border: 1px solid black;'>Stack</th>";
-	print"<th style='border: 1px solid black;'>Title</th>";
-	print"<th style='border: 1px solid black;'>Artist</th>";
-	print"<th style='border: 1px solid black;'>Album</th>";
-	print"<th style='border: 1px solid black;'>Label</th>";
-	print"</tr>";
 	$endingHour=0;
 	if(!isset($_GET['current_search_time']))
 	{
@@ -155,7 +186,6 @@ if (isset($_POST["stack"]))
 		$endingHour=$_GET['current_search_time'];
 	}
 	$formPage->printPreviousSongs($endingHour);
-	print"</table>";
 	print"</div>";
 	$time = 0;
 	if(!isset($_GET['current_search_time']))
@@ -175,6 +205,11 @@ if (isset($_POST["stack"]))
 		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?current_search_time=" . $time . "'><button>Next Hour</button></a>";
 	}
 	print"</div>";
+	print"</div>";
+	print"</section>";
+	print"<div class='push'>
+				
+		  </div>";
  
 	print $formPage -> getBottom();
 	
