@@ -6,7 +6,7 @@
 	
 	if(!$_SESSION['loggedIn']=="true")
 	{
-		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/lab3.php");
+		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Merged/lab3.php");
 		exit();
 	}
 	
@@ -93,13 +93,95 @@ if (isset($_POST["stack"]))
 	}
 	if ($stackBool && $songTitleBool && $songArtistBool && $albumBool && $labelBool)
 	{
-		//$minusHour = time()-3600;
-		//$fh = fopen("/home/bbart595/webfiles/song_history.txt", 'w');
-		//fwrite($fh, $_POST[$stack] . "|" . $_POST[$title] . "|" . $_POST[$artist] . "|" . $_POST[$album] . "|" . $_POST[$label] . "|" . $minusHour . "|" . $_SESSION[$announcer]);
-	    $fileContent = file_get_contents ("/home/bbart595/webfiles/song_history.txt");
-	    file_put_contents ("/home/bbart595/webfiles/song_history.txt", $_POST[$stack] . "|" . $_POST[$title] . "|" . $_POST[$artist] . "|" . $_POST[$album] . "|" . $_POST[$label] . "|" . time() . "|" . $_SESSION[$announcer] . "\n" . $fileContent);
+		$link = mysqli_connect("cnmtsrv1.uwsp.edu","barthel_b_user","hit79jin","barthel_b");
 		
-		//$formPage->file_prepend("/home/bbart595/webfiles/song_history.txt", $_POST[$stack] . "|" . $_POST[$title] . "|" . $_POST[$artist] . "|" . $_POST[$album] . "|" . $_POST[$label] . "|" . $_POST[$time]);
+		if (!$link){
+			echo "Error: Unable to connect to MySQL." . PHP_EOL;
+			echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
+			echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
+			exit;
+		}
+		//sanatise that input
+		$safeArtist = mysqli_real_escape_string($link,$artistVal);	
+		$safeLabel = mysqli_real_escape_string($link,$labelVal);
+		$safeStack = mysqli_real_escape_string($link,$_POST["stack"]);
+		$safeAlbum = mysqli_real_escape_string($link,$albumVal);
+		$safeTitle = mysqli_real_escape_string($link,$titleVal);
+		
+		$searchArtist = "select id from artist where artistname = '{$safeArtist}';";
+		if($queryArtist = mysqli_query($link,$searchArtist)){
+			$row = mysqli_fetch_assoc($queryArtist);
+			if(!empty($row))
+			{
+				$artistId = $row['id'];
+			}
+			else
+			{
+				$insertArtist = "insert into artist(artistname) values('{$safeArtist}');";
+				$queryArtist = mysqli_query($link,$insertArtist);
+				$artistId = mysqli_insert_id($link);
+			}
+		}		
+		$searchLabel = "select id from label where labelname = '{$safeLabel}';";
+		if($queryLabel = mysqli_query($link,$searchLabel)){
+			$row = mysqli_fetch_assoc($queryLabel);
+			if(!empty($row))
+			{
+				$labelId = $row['id'];
+			}
+			else
+			{
+				$insertLabel = "insert into label(labelname) values('{$safeLabel}');";
+				$queryLabel = mysqli_query($link,$insertLabel);
+				$labelId = mysqli_insert_id($link);
+			}
+		}		
+	
+		$searchStack = "select id from stack where stackname = '{$safeStack}';";
+		if($queryStack = mysqli_query($link,$searchStack)){
+			$row = mysqli_fetch_assoc($queryStack);
+			if(!empty($row))
+			{
+				$stackId = $row['id'];
+			}
+			else
+			{
+				$stackId = 1;
+			}
+		}		
+		$searchAlbum = "select id from album where albumname = '{$safeAlbum}';";
+		if($queryAlbum = mysqli_query($link,$searchAlbum)){
+			$row = mysqli_fetch_assoc($queryAlbum);
+			if(!empty($row))
+			{
+				$albumId = $row['id'];
+			}
+			else
+			{
+				$insertAlbum = "insert into album(albumname,labelid,artistid) values('{$safeAlbum}',{$labelId},{$artistId});";
+				$queryAlbum = mysqli_query($link,$insertAlbum);
+				$albumId = mysqli_insert_id($link);
+			}
+		}
+		
+		$searchSong = "select song.id from song,stack,album,label,artist " . 
+			"where song.stackid = stack.id and song.albumid = album.id and album.labelid = label.id and album.artistid = artist.id " .
+			"and title = '{$safeTitle}' and stackid = '{$stackId}' and albumid = '{$albumId}' and artistid = '{$artistId}' and labelid = '{$labelId}';";
+		if($querySong = mysqli_query($link,$searchSong)){
+			$row = mysqli_fetch_assoc($querySong);
+			if(!empty($row))
+			{
+				$songId = $row['id'];
+			}
+			else
+			{
+				$insertSong = "insert into song(title,stackid,albumid) values('{$safeTitle}',{$stackId},{$albumId});";
+				$querySong = mysqli_query($link,$insertSong);
+				$songId = mysqli_insert_id($link);
+			}
+		}
+		$insertHistory = "insert into history(time,songid,userid) values(now(),{$songId},{$_SESSION["userId"]});";
+		$queryHistory = mysqli_query($link,$insertHistory);
 
 		$stackOp = 0;
 		$titleVal = "";
@@ -108,6 +190,7 @@ if (isset($_POST["stack"]))
 		$labelVal = "";
 	}
 }
+	$link = mysqli_connect("cnmtsrv1.uwsp.edu","barthel_b_user","hit79jin","barthel_b");
 	$formPage = new Form("UWSP Playlist");
 
 	
@@ -168,7 +251,7 @@ if (isset($_POST["stack"]))
 	$selOption = array("","A","B","C","D","E","LR","MR","HR","NM","WI");
 	print $formPage -> addSelect("stack","selStack",$selOption,$stackOp);
 	print "</div></div>";
-	print $formPage->addHiddenTextInput("announcer",$_SESSION['username']);
+	print $formPage->addHiddenTextInput("announcer",$_SESSION['userId']);
 	print "<div class='row'>";
 	print $formPage -> addSubmit("submit");
 	print "</div>";
@@ -177,32 +260,32 @@ if (isset($_POST["stack"]))
 	print "</div>";
 	print"<div id='song_container'>";
 	$endingHour=0;
-	if(!isset($_GET['current_search_time']))
+	if(!isset($_GET['index']))
 	{
-		$endingHour = time();
+		$_SESSION["previousIndex"] = 0;
 	}
 	else
 	{
-		$endingHour=$_GET['current_search_time'];
+		$_SESSION["previousIndex"]=$_GET['index'];
 	}
-	$formPage->printPreviousSongs($endingHour);
+	$formPage->printPreviousSongs($link,$_SESSION["previousIndex"]);
 	print"</div>";
-	$time = 0;
-	if(!isset($_GET['current_search_time']))
-	{
-		$time = time() -3600;
-	}
-	else
-	{
-		$time = $_GET['current_search_time'] -3600;
-	}
 	print"<div class='recentNav'>";
-	print"<a href='http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/assignment3.php?current_search_time=" . $time . "'><button>Previous Hour</button></a>";
+	$previousButton = $_SESSION["previousIndex"] + 1;
+	print"<a href='http://cnmtsrv2.uwsp.edu/~bbart595/Merged/assignment3.php?index=" . $previousButton . "'><button>Previous Hour</button></a>";
 	$time = $time + 7200;
-	if(!(time() <= ($time)))
+	if($_SESSION["previousIndex"] > 0)
 	{
-		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/assignment3.php?current_search_time=" . time() . "'><button>Return to Current Hour</button></a>";
-		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/assignment3.php?current_search_time=" . $time . "'><button>Next Hour</button></a>";
+		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/Merged/assignment3.php'><button>Current Hour</button></a>";
+		$nextButton = $_SESSION["previousIndex"] - 1;
+		if($nextButton == 0)
+		{
+			print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/Merged/assignment3.php'><button>Next Hour</button></a>";
+		}
+		else
+		{	
+			print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/Merged/assignment3.php?index=" . $nextButton . "'><button>Next Hour</button></a>";
+		}
 	}
 	print"</div>";
 	print"</div>";

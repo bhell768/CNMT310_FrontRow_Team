@@ -5,18 +5,18 @@
 	
 	if(!$_SESSION['loggedIn']=="true")
 	{
-		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/lab3.php");
+		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Merged/lab3.php");
 		exit();
 	}
 	
 	if(isset($_POST['top_ten_report']))
 	{
-		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/top_ten_report.php");
+		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Merged/top_ten_report.php");
 		exit();
 	}
 	else if (isset($_POST['five_most_frequent']))
 	{
-		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/five_most_frequent.php");
+		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Merged/five_most_frequent.php");
 		exit();
 	}
 	
@@ -66,7 +66,6 @@
 	print $formPage -> addSubmit('top_ten_report', 'Top 10 Songs Played');
 	print "<br/><br/>" . $formPage -> addSubmit('five_most_frequent', 'Five Most Frequent Songs From Stack');
 	print $formPage -> getFormBottom();
-	print "</div>";
 	print"</div>";
 	print"</section>";
 	print"<div class='push'>

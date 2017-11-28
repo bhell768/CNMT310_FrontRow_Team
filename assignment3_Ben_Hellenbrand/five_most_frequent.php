@@ -8,7 +8,7 @@
 		
 	if(!$_SESSION['loggedIn']=="true")
 	{
-		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/lab3.php");
+		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Merged/lab3.php");
 		exit();
 	}
 	

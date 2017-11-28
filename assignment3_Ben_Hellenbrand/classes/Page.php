@@ -59,47 +59,35 @@ class Page
 		return $this -> _bottomContent;
     }
 	
-	function printPreviousSongs($passedTime) {
-		$endingHour = $passedTime;
-
-		$beginningHour=$endingHour-3600;
+	function printPreviousSongs($link, $passedTime) 
+	{
+		$endingHour = $passedTime + 1;
+		$beginningHour = $passedTime;
+		$searchHistory = "select stack.stackname as stack, history.time as time, song.title as title, artist.artistname as artist, album.albumname as album, label.labelname as label from history, stack, song, artist, album, label where history.songid = song.id and album.id = song.albumid and artist.id = album.artistid and label.id = album.labelid and song.stackid = stack.id and time between date_sub(now(), interval {$endingHour} hour) and date_sub(now(),interval {$beginningHour} hour);";
 		
-		$fh = fopen("/home/bbart595/webfiles/song_history.txt","r");
-
-		if (!is_resource($fh)) 
+		if($queryHistory = mysqli_query($link,$searchHistory))
 		{
-			print"<span>Unable to access song database</span>";
-		}
-		else 
-		{
-			$foundFirstEntry = false;
-			while ($line = fgets($fh)) 
-			{
-				$songDetails = explode("|",$line);
-				if($songDetails[5] >= $beginningHour && $songDetails[5] <= $endingHour)
-				{
-					print"<div class='colors rec-0 rec-1 song'>";
-					$foundFirstEntry=true;
-						print"<div class='song_section timeData'>";
-							print"<h3 class='day'>Test Day</h3>";
-							print"<h3 class='time'>Test Time</h3>";
-						print"</div>";
-						print"<div class='song_section songData'>";
-							print"<h2 class='title'>" . $songDetails[1] . "</h2>";
-							print"<h3 class='artist'>" . $songDetails[2] . "</h3>";
-						print"</div>";
-						print"<div class='song_section albumData'>";
-							print"<h4 class='album'>" . $songDetails[3] . "</h4>";
-							print"<h4 class='label'>" . $songDetails[4] . "</h4>";
-						print"</div>";
+			while($row = mysqli_fetch_assoc($queryHistory)){
+				print"<div class='colors rec-0 rec-1 song'>";
+					print"<div class='song_section timeData'>";
+						print"<h3 class='day'>Test Day</h3>";
+						print"<h3 class='time'>" . $row['time'] . "</h3>";
 					print"</div>";
-
-				}
-				else if($foundFirstEntry==true)
-				{
-					break;
-				}
-			}//end while
+					print"<div class='song_section songData'>";
+						print"<h2 class='title'>" . $row['title'] . "</h2>";
+						print"<h3 class='artist'>" . $row['artist'] . "</h3>";
+					print"</div>";
+					print"<div class='song_section albumData'>";
+						print"<h4 class='album'>" . $row['album'] . "</h4>";
+						print"<h4 class='label'>" . $row['label'] . "</h4>";
+					print"</div>";
+				print"</div>";
+			}	
+		}
+		else
+		{
+			print "An error occured with sql connection";
+			var_dump($queryHistory);
 		}
 	}
 }
