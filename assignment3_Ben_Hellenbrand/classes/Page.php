@@ -8,91 +8,67 @@ class Page
 	private $_topContent = "";
 	private $_bottomContent = "";
 	private $_headItems;
-
+	private $_tableHead;
 
 	function __construct($title)
 	{
 		$this -> _pageTitle = $title;
 	}
 
-    function addHeadItem ($headItem)
-    {
+   function addHeadItem ($headItem)
+   {
 		// $this -> _headItemArray[$this -> _headItemIndex] = $headItem;
 		// $this -> _headItemIndex = $this -> _headItemIndex + 1;
 		$this -> _headItems .= $headItem;
-    }  
+   }  
 
-    function setTop()
-    {
-        $this -> _topContent .= "<!doctype html><html>";
-        $this -> _topContent .= "<head><title>" . $this -> _pageTitle . "</title>";
+   function setTop()
+   {
+      $this -> _topContent .= "<!doctype html><html>";
+      $this -> _topContent .= "<head><title>" . $this -> _pageTitle . "</title>";
       //foreach ($this -> _headItemArray as $headItem)
       //{
         $this -> _topContent .= $this -> _headItems;
       //}
-		$this -> _topContent .= "</head>";
+      $this -> _topContent .= "</head>";
 		$this -> _topContent .= "<body>";
-		$this -> _topContent .= "<div id=wrapper>";
-		
       
-    }
+   }
 
-    function setBottom()
-    {
-		$this -> _bottomContent .= "</div>";
+   function setBottom()
+   {
 		$this -> _bottomContent .= "</body>";
 		$this -> _bottomContent .= "</html>"; 
-    }
+   }
 
-    function getTop()
-    {
+   function getTop()
+   {
 		return $this -> _topContent;
-    }
+   }
 
-    function getBottom()
-    {
+   function getBottom()
+   {
 		return $this -> _bottomContent;
-    }
-	
-	function printPreviousSongs($passedTime) {
-		$endingHour = $passedTime;
+   }
 
-		$beginningHour=$endingHour-3600;
+	function printPreviousSongs($passedTime)
+	{
+		$endingHour = $passedTime + 1;
+		$beginningHour = $endingHour;
+
 		
-		$fh = fopen("/home/bbart595/webfiles/song_history.txt","r");
 
-		if (!is_resource($fh)) 
+		$searchHistory = "select stack.stackname as stack, history.time as time, song.title as title, artist.artistname as artist, album.albumname as album, label.labelname as label from history, song, artist, album, label where history.songid = song.id and album.id = song.albumid and artist.id = album.artisid and label.id = album.labelid and song.stackid = stack.id and time between date_sub(now(), interval {$endingHour} hour) and (now(),interval {$beginingHour} hour);";
+		
+		if($queryHistory = mysqli_query($searchHistory))
 		{
-			print"<span>Unable to access song database</span>";
+			while($row = mysqli_fetch_assoc($queryHistory){
+				print "<tr><td>{$row['time']}</td><td>{$row['stack']}</td><td>{$row['title']}</td>";
+				print "<td>{$row['artist']}</td><td>{$row['album']}</td><td>{$row['label']}</td>";
+				print "</tr>";
+			}	
 		}
-		else 
-		{
-			$foundFirstEntry = false;
-			while ($line = fgets($fh)) 
-			{
-				print"<div class='colors rec-0 rec-1 song'>";
-				$songDetails = explode("|",$line);
-				if($songDetails[5] >= $beginningHour && $songDetails[5] <= $endingHour)
-				{
-					$foundFirstEntry=true;
-					print"<tr>";
-					unset($songDetails[5]);
-					unset($songDetails[6]);
-					print"<div class='song_section timeData'>";
-					foreach($songDetails as $currentEntry)
-					{
-						print"<td style='border: 1px solid black;'>" . $currentEntry . "</td>";
-					}
-					print"</div>";
-					print"</tr>";
-				}
-				else if($foundFirstEntry==true)
-				{
-					break;
-				}
-				print"</div>";
-			}//end while
-		}
+
 	}
 }
 
@@ -106,7 +82,6 @@ class Form extends Page
 
 	function getFormTop($method, $action)
 	{
-		$this-> _formTop .= "<div id='log-css'>";
 		if($method == "GET" || $method == "POST")
 		{
 			$this -> _formTop .= "<form method='" . $method . "' action='" . $action ."'>";
@@ -121,18 +96,12 @@ class Form extends Page
 	function getFormBottom()
 	{
 		$this -> _formBottom .= "</form>";
-		$this -> _formBottom .= "</div>";
 		return $this -> _formBottom;
 	}
 
 	function addTextInput($name, $value="")
 	{
 		return "<input type='text' name='" . $name . "' value='" . $value . "'>";
-	}
-	
-	function addHiddenTextInput ($name, $value="")
-	{
-		return "<input type='hidden' name='" . $name . "' value='" . $value . "'>";
 	}
 
 	function addPassword($id, $name)

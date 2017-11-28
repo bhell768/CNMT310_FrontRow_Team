@@ -223,40 +223,40 @@ if (isset($_POST["stack"]))
 	print"<div id='song_container'>";
 	print"<table style='border-collapse: collapse; border: 1px solid black;'>";
 	print"<tr>";
+	print"<th style='border: 1px solid black;'>Time</th>'";
 	print"<th style='border: 1px solid black;'>Stack</th>";
 	print"<th style='border: 1px solid black;'>Title</th>";
 	print"<th style='border: 1px solid black;'>Artist</th>";
 	print"<th style='border: 1px solid black;'>Album</th>";
 	print"<th style='border: 1px solid black;'>Label</th>";
 	print"</tr>";
-	$endingHour=0;
-	if(!isset($_GET['current_search_time']))
+	if(!isset($_GET['index']))
 	{
-		$endingHour = time();
+		$_SESSION["previousIndex"] = 0;
 	}
 	else
 	{
-		$endingHour=$_GET['current_search_time'];
+		$_SESSION["previousIndex"]=$_GET['index'];
 	}
-	$formPage->printPreviousSongs($endingHour);
+	$formPage->printPreviousSongs($_SESSION["previousIndex"]);
 	print"</table>";
 	print"</div>";
-	$time = 0;
-	if(!isset($_GET['current_search_time']))
-	{
-		$time = time() -3600;
-	}
-	else
-	{
-		$time = $_GET['current_search_time'] -3600;
-	}
 	print"<div class='recentNav'>";
-	print"<a href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?current_search_time=" . $time . "'><button>Previous Hour</button></a>";
+	$previousButton = $_SESSION["previousIndex"] + 1;
+	print"<a href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?index="{$previousButton}"'><button>Previous Hour</button></a>";
 	$time = $time + 7200;
-	if(!(time() <= ($time)))
+	if($_SESSION["previousIndex"] > 0)
 	{
-		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?current_search_time=" . time() . "'><button>Return to Current Hour</button></a>";
-		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?current_search_time=" . $time . "'><button>Next Hour</button></a>";
+		print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php'><button>Current Hour</button></a>";
+		$nextButton = $_SESSION["previousIndex"] - 1;
+		if($nextButton == 0)
+		{
+			print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php'><button>Next Hour</button></a>";
+		}
+		else
+		{	
+			print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?index="{$nextButton}"'><button>Next Hour</button></a>";
+		}
 	}
 	print"</div>";
  
