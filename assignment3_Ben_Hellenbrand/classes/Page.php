@@ -54,9 +54,9 @@ class Page
 	function printPreviousSongs($link, $passedTime)
 	{
 		$endingHour = $passedTime + 1;
-		$beginningHour = $endingHour;
+		$beginningHour = $passedTime;
 
-		$searchHistory = "select stack.stackname as stack, history.time as time, song.title as title, artist.artistname as artist, album.albumname as album, label.labelname as label from history, stack, song, artist, album, label where history.songid = song.id and album.id = song.albumid and artist.id = album.artisid and label.id = album.labelid and song.stackid = stack.id and time between date_sub(now(), interval {$endingHour} hour) and (now(),interval {$beginningHour} hour);";
+		$searchHistory = "select stack.stackname as stack, history.time as time, song.title as title, artist.artistname as artist, album.albumname as album, label.labelname as label from history, stack, song, artist, album, label where history.songid = song.id and album.id = song.albumid and artist.id = album.artistid and label.id = album.labelid and song.stackid = stack.id and time between date_sub(now(), interval {$endingHour} hour) and date_sub(now(),interval {$beginningHour} hour);";
 		
 		if($queryHistory = mysqli_query($link,$searchHistory))
 		{

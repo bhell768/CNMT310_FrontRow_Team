@@ -158,7 +158,7 @@ if (isset($_POST["stack"]))
 			}
 			else
 			{
-				$insertAlbum = "insert into album(albumname) values('{$safeAlbum}');";
+				$insertAlbum = "insert into album(albumname,labelid,artistid) values('{$safeAlbum}',{$labelId},{$artistId});";
 				$queryAlbum = mysqli_query($link,$insertAlbum);
 				$albumId = mysqli_insert_id($link);
 			}
@@ -166,7 +166,7 @@ if (isset($_POST["stack"]))
 		
 		$searchSong = "select song.id from song,stack,album,label,artist " . 
 			"where song.stackid = stack.id and song.albumid = album.id and album.labelid = label.id and album.artistid = artist.id " .
-			"and title = '{$safeTitle}' and stackid = '{$stackId}' and albumname = '{$albumId}' and artistname = '{$artistId}' and labelname = '{$labelId}';";
+			"and title = '{$safeTitle}' and stackid = '{$stackId}' and albumid = '{$albumId}' and artistid = '{$artistId}' and labelid = '{$labelId}';";
 		if($querySong = mysqli_query($link,$searchSong)){
 			$row = mysqli_fetch_assoc($querySong);
 			if(!empty($row))
@@ -181,7 +181,7 @@ if (isset($_POST["stack"]))
 			}
 		}
 
-		$insertHistory = "insert into history(time,songid,userid) values(now(),{$songId},{$_SESSION['userId']}";
+		$insertHistory = "insert into history(time,songid,userid) values(now(),{$songId},{$_SESSION["userId"]});";
 		$queryHistory = mysqli_query($link,$insertHistory);
 		
 		
@@ -209,7 +209,7 @@ if (isset($_POST["stack"]))
 
 	print $formPage -> getTop();
 	print $formPage -> getFormTop("POST","assignment3.php");
-	print "<h1>UWSP Playlist Tracker</h1>\n";
+	print "<h1>UWSP Playlist Tracker{$_SESSION["userId"]}</h1>\n";
 	print $formPage -> addLabel("selStack","Stack: ");
 	$selOption = array("","A","B","C","D","E","LR","MR","HR","NM","WI");
 	print $formPage -> addSelect("stack","selStack",$selOption,$stackOp) . "<br />";
