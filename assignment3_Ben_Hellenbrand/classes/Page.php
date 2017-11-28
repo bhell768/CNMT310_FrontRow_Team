@@ -68,10 +68,11 @@ class Page
 		if($queryHistory = mysqli_query($link,$searchHistory))
 		{
 			while($row = mysqli_fetch_assoc($queryHistory)){
-				print"<div class='colors rec-0 rec-1 song'>";
-					print"<div class='song_section timeData'>";
-						print"<h3 class='day'>Test Day</h3>";
-						print"<h3 class='time'>" . $row['time'] . "</h3>";
+				$dateTime = explode(' ', $row['time']);
+                                print"<div class='colors rec-0 rec-1 song'>";
+                                        print"<div class='song_section timeData'>";
+                                                print"<h3 class='day'>" . $dateTime[0] . "</h3>";
+                                           	print"<h3 class='time'>" . $dateTime[1] . "</h3>";
 					print"</div>";
 					print"<div class='song_section songData'>";
 						print"<h2 class='title'>" . $row['title'] . "</h2>";
