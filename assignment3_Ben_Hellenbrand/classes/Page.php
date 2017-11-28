@@ -175,9 +175,9 @@ class Form extends Page
 		return $this -> _select;
 	}
 	
-	function addSubmit($name="submit")
+	function addSubmit($name="submit", $value="submit")
 	{
-		return "<input type='submit' name='" . $name . "'>";
+		return "<input type='submit' value='" . $value . "' name='" . $name . "'>";
 	}
 }
 	

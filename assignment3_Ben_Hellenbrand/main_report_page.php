@@ -62,10 +62,9 @@
 				<div class='main-content'>";
 				
 	print $formPage -> getFormTop("POST","main_report_page.php");
-	print "<h1>Top 10 Songs Played</h1>";
-	print $formPage -> addSubmit('top_ten_report');
-	print "<h1>Five Most Frequent Songs From Stack</h1>";
-	print $formPage -> addSubmit('five_most_frequent');
+	print "<h1>Select a Report to View:</h1><br/>";
+	print $formPage -> addSubmit('top_ten_report', 'Top 10 Songs Played');
+	print "<br/><br/>" . $formPage -> addSubmit('five_most_frequent', 'Five Most Frequent Songs From Stack');
 	print $formPage -> getFormBottom();
 	print "</div>";
 	print"</div>";

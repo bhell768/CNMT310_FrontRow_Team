@@ -2,12 +2,27 @@
 	session_start();
 
 	require_once("classes/Page.php");
+	require_once("classes/DB.class.php");
+	
+	$db_connection = new DB();
+	
+	
 	
 	if(!$_SESSION['loggedIn']=="true")
 	{
 		header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Sprint4_materials/lab3.php");
 		exit();
 	}
+	
+	$result = $db_connection -> dbCall("select song.title,artist.artistname,COUNT(history.id) AS SongCount 
+										from history,song,album,artist
+										where time between date_sub(now(), interval 7 day) and now()
+											AND song.id = history.songid
+											AND song.albumid = album.id
+											AND album.artistid = artist.id
+										group by songid
+										order by SongCount desc
+										limit 10;");
 	
 	$formPage = new Form("UWSP Playlist");
 	
@@ -49,9 +64,39 @@
 					<h2>Top Ten Songs Report</h2>
 				</div>
 				<div class='main-content'>";
-				
-				
-	print "</div>";
+	
+	print "<div id='song_container'>";
+	
+	if($result != "")
+	{
+		print "<div class='colors rec-0 rec-1 song'>";
+		print "<div class='song_section timeData'>";
+		print("<h3 class='day'>Song Title:</h3>");
+		print "</div>";
+		print "<div class='song_section songData'>";
+		print("<h2 class='title'>Song Artist:</h2>");
+		print "</div>";
+		print "<div class='song_section albumData'>";
+		print("<h4 class='album'>Times Played:</h4>");
+		print "</div>";
+		print "</div>";
+		foreach($result as $arr)
+		{
+			print "<div class='colors rec-0 rec-1 song'>";
+			print "<div class='song_section timeData'>";
+			print("<h3 class='day'>" . $arr["title"] . "</h3>");
+			print "</div>";
+			print "<div class='song_section songData'>";
+			print("<h2 class='title'>" . $arr["artistname"] . "</h2>");
+			print "</div>";
+			print "<div class='song_section albumData'>";
+			print("<h4 class='album'>" . $arr["SongCount"] . "</h4>");
+			print "</div>";
+			print "</div>";
+		}
+	}
+	
+	print"</div>";
 	print"</div>";
 	print"</section>";
 	print"<div class='push'>
