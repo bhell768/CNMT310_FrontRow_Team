@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 require_once("classes/Page.php");
 
 $errors = array();
@@ -26,28 +24,28 @@ if (isset($_POST["username"]))
 		$link = mysqli_connect("cnmtsrv1.uwsp.edu","barthel_b_user","hit79jin","barthel_b");
 		if(!$link){
 			$debugging = "Error: Unable to connect to MySQL. " . PHP_EOL;
-			$debugging .= "Debuggin errno: " mysqli_connect_errno() . PHP_EOL;
-			$debugging .= "Debuggin error: " mysqli_connect_error() . PHP_EOL;
+		//	$debugging .= "Debuggin errno: " mysqli_connect_errno() . PHP_EOL;
+		//	$debugging .= "Debuggin error: " mysqli_connect_error() . PHP_EOL;
 		}
 		$userEntered = $_POST['username'];
-		$safeUser = mysqli_real_escape_string($userEntered,$link);
+		$safeUser = mysqli_real_escape_string($link,$userEntered);
 		
 		$psswEntered = $_POST['password'];
-		$safePssw = mysqli_real_escape_string($psswEntered,$link);
+		$safePssw = mysqli_real_escape_string($link,$psswEntered);
 
-		$searchUser = "select id from user where username = '{$safePssw}';";
+		$searchUser = "select id from user where username = '{$safeUser}';";
 		if($queryUser = mysqli_query($link,$searchUser)){
-			$row = mysqli_fetch_assoc($queryUser));
+			$row = mysqli_fetch_assoc($queryUser);
 			if(!empty($row)){
 				$userId = $row['id'];
-				$searchUser = "select password from user where id = '{$userId}';";
+				$searchUser = "select password from user where id = {$userId};";
 				if($queryUser = mysqli_query($link,$searchUser)){
 					$row = mysqli_fetch_assoc($queryUser);
-					if(!empty($row){
+					if(!empty($row)){
 						$storedPssw = $row['password'];
 						if(password_verify($safePssw,$storedPssw)){//not sure if sanitized password will mess with hashing
 							$_SESSION['loggedIn']="true";
-							$_SESSION['username']=$safeUser;//not sure if should sanitize and store or not allow certain characters and then that would be sanitized
+							$_SESSION['userId']=$userId;//works better for playlist page use
 						}
 						else{
 							$loginCase = "incorrect";//password didn't checkout

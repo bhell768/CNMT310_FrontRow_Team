@@ -1,6 +1,4 @@
 <?php
-	
-	session_start();
 
 	require_once("classes/Page.php");
 	
@@ -102,11 +100,11 @@ if (isset($_POST["stack"]))
 			exit;
 		}
 		//sanatise that input
-		$safeArtist = mysqli_real_escape_string($artistVal,$link);	
-		$safeLabel = mysqli_real_escape_string($LabelVal,$link);
-		$safeStack = mysqli_real_escape_string($stackVal,$link);
-		$safeAlbum = mysqli_real_escape_string($albumVal,$link);
-		$safeTitle = mysqli_real_escape_string($titleVal,$link);
+		$safeArtist = mysqli_real_escape_string($link,$artistVal);	
+		$safeLabel = mysqli_real_escape_string($link,$labelVal);
+		$safeStack = mysqli_real_escape_string($link,$_POST["stack"]);
+		$safeAlbum = mysqli_real_escape_string($link,$albumVal);
+		$safeTitle = mysqli_real_escape_string($link,$titleVal);
 		
 		$searchArtist = "select id from artist where artistname = '{$safeArtist}';";
 		if($queryArtist = mysqli_query($link,$searchArtist)){
@@ -116,7 +114,7 @@ if (isset($_POST["stack"]))
 				$artistId = $row['id'];
 			}
 			else
-
+			{
 				$insertArtist = "insert into artist(artistname) values('{$safeArtist}');";
 				$queryArtist = mysqli_query($link,$insertArtist);
 				$artistId = mysqli_insert_id($link);
@@ -168,20 +166,25 @@ if (isset($_POST["stack"]))
 		
 		$searchSong = "select song.id from song,stack,album,label,artist " . 
 			"where song.stackid = stack.id and song.albumid = album.id and album.labelid = label.id and album.artistid = artist.id " .
-			"and title = '{$safeSong}' and stackid = '{$stackId}' and albumname = '{$albumId}' and artistname = '{$artistId}' and labelname = '{$labelId}';";
+			"and title = '{$safeTitle}' and stackid = '{$stackId}' and albumname = '{$albumId}' and artistname = '{$artistId}' and labelname = '{$labelId}';";
 		if($querySong = mysqli_query($link,$searchSong)){
-			$row = mysqli_fetch_assoc($queryLabel);
+			$row = mysqli_fetch_assoc($querySong);
 			if(!empty($row))
 			{
 				$songId = $row['id'];
 			}
 			else
 			{
-				$insertSong = "insert into song(title,stackid,albumid) values('{$safeSong}',{$stackId},{$albumId});";
+				$insertSong = "insert into song(title,stackid,albumid) values('{$safeTitle}',{$stackId},{$albumId});";
 				$querySong = mysqli_query($link,$insertSong);
 				$songId = mysqli_insert_id($link);
 			}
-		}		
+		}
+
+		$insertHistory = "insert into history(time,songid,userid) values(now(),{$songId},{$_SESSION['userId']}";
+		$queryHistory = mysqli_query($link,$insertHistory);
+		
+		
 		$stackOp = 0;
 		$titleVal = "";
 		$artistVal = "";
@@ -213,7 +216,7 @@ if (isset($_POST["stack"]))
 	print "Song Artist: " . $formPage -> addTextInput("songArtist",$artistVal) . "<br />";
 	print "Album: " . $formPage -> addTextInput("album",$albumVal) . "<br />";
 	print "Label: " . $formPage -> addTextInput("label",$labelVal) . "<br />";
-	print $formPage->addHiddenTextInput("announcer",$_SESSION['username']) . "<br />";
+	print $formPage->addHiddenTextInput("announcer",$_SESSION['userId']) . "<br />";
 	print $formPage -> addSubmit("submit");
 	print $formPage -> getFormBottom();
 	
