@@ -51,22 +51,25 @@ class Page
 		return $this -> _bottomContent;
    }
 
-	function printPreviousSongs($passedTime)
+	function printPreviousSongs($link, $passedTime)
 	{
 		$endingHour = $passedTime + 1;
 		$beginningHour = $endingHour;
 
+		$searchHistory = "select stack.stackname as stack, history.time as time, song.title as title, artist.artistname as artist, album.albumname as album, label.labelname as label from history, stack, song, artist, album, label where history.songid = song.id and album.id = song.albumid and artist.id = album.artisid and label.id = album.labelid and song.stackid = stack.id and time between date_sub(now(), interval {$endingHour} hour) and (now(),interval {$beginningHour} hour);";
 		
-
-		$searchHistory = "select stack.stackname as stack, history.time as time, song.title as title, artist.artistname as artist, album.albumname as album, label.labelname as label from history, song, artist, album, label where history.songid = song.id and album.id = song.albumid and artist.id = album.artisid and label.id = album.labelid and song.stackid = stack.id and time between date_sub(now(), interval {$endingHour} hour) and (now(),interval {$beginingHour} hour);";
-		
-		if($queryHistory = mysqli_query($searchHistory))
+		if($queryHistory = mysqli_query($link,$searchHistory))
 		{
-			while($row = mysqli_fetch_assoc($queryHistory){
+			while($row = mysqli_fetch_assoc($queryHistory)){
 				print "<tr><td>{$row['time']}</td><td>{$row['stack']}</td><td>{$row['title']}</td>";
 				print "<td>{$row['artist']}</td><td>{$row['album']}</td><td>{$row['label']}</td>";
 				print "</tr>";
 			}	
+		}
+		else
+		{
+			print "An error occured with sql connection";
+			var_dump($queryHistory);
 		}
 
 	}
@@ -75,10 +78,9 @@ class Page
 class Form extends Page
 {
 
-	private $_formTop = "";
-	private $_formBottom = "";
 	private $_select = "";
-	
+	private $_formTop = "";
+	private $_formBottom = "";	
 
 	function getFormTop($method, $action)
 	{

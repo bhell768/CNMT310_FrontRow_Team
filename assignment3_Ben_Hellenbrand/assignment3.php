@@ -192,6 +192,7 @@ if (isset($_POST["stack"]))
 		$labelVal = "";
 	}
 }
+	$link = mysqli_connect("cnmtsrv1.uwsp.edu","barthel_b_user","hit79jin","barthel_b");
 	$formPage = new Form("UWSP Playlist");
 
 	
@@ -216,7 +217,8 @@ if (isset($_POST["stack"]))
 	print "Song Artist: " . $formPage -> addTextInput("songArtist",$artistVal) . "<br />";
 	print "Album: " . $formPage -> addTextInput("album",$albumVal) . "<br />";
 	print "Label: " . $formPage -> addTextInput("label",$labelVal) . "<br />";
-	print $formPage->addHiddenTextInput("announcer",$_SESSION['userId']) . "<br />";
+//	print $formPage->addHiddenTextInput("announcer",$_SESSION['userId']) . "<br />";
+//willl add back quick testing resolving errors
 	print $formPage -> addSubmit("submit");
 	print $formPage -> getFormBottom();
 	
@@ -238,12 +240,12 @@ if (isset($_POST["stack"]))
 	{
 		$_SESSION["previousIndex"]=$_GET['index'];
 	}
-	$formPage->printPreviousSongs($_SESSION["previousIndex"]);
+	$formPage->printPreviousSongs($link,$_SESSION["previousIndex"]);
 	print"</table>";
 	print"</div>";
 	print"<div class='recentNav'>";
 	$previousButton = $_SESSION["previousIndex"] + 1;
-	print"<a href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?index="{$previousButton}"'><button>Previous Hour</button></a>";
+	print"<a href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?index=" . $previousButton . "'><button>Previous Hour</button></a>";
 	$time = $time + 7200;
 	if($_SESSION["previousIndex"] > 0)
 	{
@@ -255,7 +257,7 @@ if (isset($_POST["stack"]))
 		}
 		else
 		{	
-			print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?index="{$nextButton}"'><button>Next Hour</button></a>";
+			print"<a class='added' href='http://cnmtsrv2.uwsp.edu/~bbart595/assignment3_Ben_Hellenbrand/assignment3.php?index=" . $nextButton . "'><button>Next Hour</button></a>";
 		}
 	}
 	print"</div>";
