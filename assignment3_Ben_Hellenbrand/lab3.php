@@ -47,6 +47,8 @@ if (isset($_POST["username"]))
 						if(password_verify($safePssw,$storedPssw)){//not sure if sanitized password will mess with hashing
 							$_SESSION['loggedIn']="true";
 							$_SESSION['userId']=$userId;//works better for playlist page use
+							header("Location: http://cnmtsrv2.uwsp.edu/~bbart595/Merged/assignment3.php");
+							exit();
 						}
 						else{
 							$loginCase = "incorrect";//password didn't checkout
